@@ -23,19 +23,33 @@ case "$1" in
     fi
 
     date=$(date +%Y-%m-%d)
-    calories=0
-    protein=0
+    calories=$(awk -F'\t' '
+      BEGIN { acc = -1 }
+      /'"$food"'/ { acc = $4 }
+      END { print acc }
+    ' "$filename")
+    protein=$(awk -F'\t' '
+      BEGIN { acc = -1 }
+      /'"$food"'/ { acc = $5 }
+      END { print acc }
+    ' "$filename")
 
-    read -r -p "Calories: " calories
-    if [ -z "$calories" ]; then
-      echo "No calories entered"
-      exit 1
+    if [ "$calories" -eq -1 ]; then
+      read -r -p "Calories: " calories
+
+      if [ -z "$calories" ]; then
+        echo "No calories entered"
+        exit 1
+      fi
     fi
 
-    read -r -p "Protein: " protein
-    if [ -z "$protein" ]; then
-      echo "No protein entered"
-      exit 1
+    if [ "$protein" -eq -1 ]; then
+      read -r -p "Protein: " protein
+
+      if [ -z "$protein" ]; then
+        echo "No protein entered"
+        exit 1
+      fi
     fi
 
     read -r -p "Servings: " servings

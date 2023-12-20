@@ -104,13 +104,14 @@ case "$1" in
     ' "$filename"
     ;;
   "show")
+    date=$(date +%Y-%m-%d)
     awk -F'\t' '
       BEGIN {
         FS = "\t"
         OFS = "\t"
         print "Date", "Food", "Servings", "Calories", "Protein"
       }
-      {
+      /^'"$date"'/ {
         print $1, $2, $3, $4, $5
       }
     ' "$filename" | column -t -s $'\t'

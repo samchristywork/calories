@@ -7,13 +7,50 @@ if [ ! -f "$filename" ]; then
 fi
 
 if [ $# -eq 0 ]; then
+  "$0" add
   exit 0
 fi
 
 case "$1" in
+  "add")
+    food=$(awk -F'\t' '
+      { print $2 }
+    ' "$filename" | sort | uniq | fzf --print-query | tail -n 1)
+
+    if [ -z "$food" ]; then
+      echo "No food selected"
+      exit 1
+    fi
+
+    date=$(date +%Y-%m-%d)
+    calories=0
+    protein=0
+
+    read -r -p "Calories: " calories
+    if [ -z "$calories" ]; then
+      echo "No calories entered"
+      exit 1
+    fi
+
+    read -r -p "Protein: " protein
+    if [ -z "$protein" ]; then
+      echo "No protein entered"
+      exit 1
+    fi
+
+    read -r -p "Servings: " servings
+    if [ -z "$servings" ]; then
+      echo "No servings entered"
+      exit 1
+    fi
+
+    echo "$date	$food	$servings	$calories	$protein" >> "$filename"
+    "$0" show
+    ;;
   "help")
     echo "Usage: calories <command>"
     echo "Commands:"
+    echo "  add - add a new entry"
     echo "  help - show this help message"
     ;;
   *)

@@ -1,0 +1,22 @@
+#!/bin/bash
+
+filename="$HOME/.calories"
+
+if [ ! -f "$filename" ]; then
+  touch "$filename"
+fi
+
+if [ $# -eq 0 ]; then
+  exit 0
+fi
+
+case "$1" in
+  "help")
+    echo "Usage: calories <command>"
+    echo "Commands:"
+    echo "  help - show this help message"
+    ;;
+  *)
+    echo "Invalid option"
+    ;;
+esac

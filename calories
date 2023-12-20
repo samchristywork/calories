@@ -76,6 +76,31 @@ case "$1" in
         printf "  Per day:   % d\n", calories / days
         printf "  Remaining: % d\n", required - calories
         printf "  Today:     % d\n", today
+      }
+    ' "$filename"
+    ;;
+  "show")
+    awk -F'\t' '
+      BEGIN {
+        FS = "\t"
+        OFS = "\t"
+        print "Date", "Food", "Servings", "Calories", "Protein"
+      }
+      {
+        print $1, $2, $3, $4, $5
+      }
+    ' "$filename" | column -t -s $'\t'
+    ;;
+  "count")
+    field="$2"
+    awk -F'\t' '
+      BEGIN { acc = 0 }
+      { acc += $'"$field"' }
+      END { print acc }
+    ' "$filename"
+    ;;
+  "edit")
+    $EDITOR "$filename"
     ;;
   "today")
     date=$(date +%Y-%m-%d)
@@ -102,6 +127,9 @@ case "$1" in
     echo "Commands:"
     echo "  add - add a new entry"
     echo "  summary - show summary"
+    echo "  show - show all entries"
+    echo "  count <field> - sum all entries for a field"
+    echo "  edit - edit the file"
     echo "  today - show today's entries"
     echo "  help - show this help message"
     ;;

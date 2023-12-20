@@ -76,6 +76,24 @@ case "$1" in
         printf "  Per day:   % d\n", calories / days
         printf "  Remaining: % d\n", required - calories
         printf "  Today:     % d\n", today
+    ;;
+  "today")
+    date=$(date +%Y-%m-%d)
+    awk -F'\t' '
+      BEGIN {
+        total_calories = 0
+        total_protein = 0
+      }
+      /^'"$date"'/ {
+        print $0
+        servings = $3
+        total_calories += $4 * servings
+        total_protein += $5 * servings
+      }
+      END {
+        print ""
+        print "Total calories: " total_calories
+        print "Total protein: " total_protein
       }
     ' "$filename"
     ;;
@@ -84,6 +102,7 @@ case "$1" in
     echo "Commands:"
     echo "  add - add a new entry"
     echo "  summary - show summary"
+    echo "  today - show today's entries"
     echo "  help - show this help message"
     ;;
   *)

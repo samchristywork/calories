@@ -96,10 +96,12 @@ case "$1" in
         printf "  Per day:   % d\n", calories / days
         printf "  Remaining: % d\n", requiredCalories - calories
         printf "  Today:     % d\n", caloriesToday
+        printf "  Hours:     % d\n", (requiredCalories - calories) / dailyCalories * 24
         printf "Protein:     % d\n", protein
         printf "  Per day:   % d\n", protein / days
         printf "  Remaining: % d\n", requiredProtein - protein
         printf "  Today:     % d\n", proteinToday
+        printf "  Hours:     % d\n", (requiredProtein - protein) / dailyProtein * 24
       }
     ' "$filename"
     ;;

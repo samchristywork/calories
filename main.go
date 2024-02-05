@@ -53,5 +53,72 @@ func readFoodLog(filename string) []Entry {
 	return entries
 }
 
+func isNumeric(s string) bool {
+	_, err := strconv.ParseFloat(s, 64)
+	return err == nil
+}
+
+func addFood(filename string, food string, calories string, protein string, servings string) {
+	entries := readFoodLog(filename)
+
+	reader := bufio.NewReader(os.Stdin)
+	if food == "" {
+		fmt.Print("Enter food: ")
+		food, _ = reader.ReadString('\n')
+	}
+	if calories == "" {
+		for _, entry := range entries {
+			if entry.food == food {
+				calories = strconv.FormatFloat(entry.calories, 'f', -1, 64)
+			}
+		}
+		if calories == "" {
+			fmt.Print("Enter calories: ")
+			calories, _ = reader.ReadString('\n')
+		}
+	}
+	if protein == "" {
+		for _, entry := range entries {
+			if entry.food == food {
+				protein = strconv.FormatFloat(entry.protein, 'f', -1, 64)
+			}
+		}
+		if protein == "" {
+			fmt.Print("Enter protein: ")
+			protein, _ = reader.ReadString('\n')
+		}
+	}
+	if servings == "" {
+		fmt.Print("Enter servings: ")
+		servings, _ = reader.ReadString('\n')
+	}
+
+	file, err := os.OpenFile(
+		filename,
+		os.O_APPEND|os.O_CREATE|os.O_WRONLY,
+		0644,
+	)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	defer file.Close()
+
+	date := time.Now().Format("2006-01-02")
+	_, err = file.WriteString(
+		fmt.Sprintf(
+			"%s	%s	%s	%s	%s\n",
+			date,
+			food,
+			calories,
+			protein,
+			servings,
+		),
+	)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
 func main() {
 }

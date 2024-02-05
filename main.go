@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Entry struct {
@@ -133,6 +134,74 @@ func showFood(filename string) {
 			entry.servings,
 			entry.food,
 		)
+	}
+}
+
+func duration(seconds int) string {
+	if seconds < 0 {
+		seconds = -seconds
+	}
+	h := seconds / 3600
+	m := (seconds % 3600) / 60
+	s := seconds % 60
+
+	if h > 0 {
+		return fmt.Sprintf("%d:%02d:%02d", h, m, s)
+	} else if m > 0 {
+		return fmt.Sprintf("%d:%02d", m, s)
+	} else {
+		return fmt.Sprintf("%d:%02d:%02d", h, m, s)
+	}
+}
+
+func summary(filename string) {
+	entries := readFoodLog(filename)
+
+	startDate, err := time.Parse("2006-01-02", entries[0].date)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	now := time.Now()
+
+	days := now.Sub(startDate).Hours() / 24
+
+	calories := 0.0
+	protein := 0.0
+
+	for _, entry := range entries {
+		servings := entry.servings
+		calories += entry.calories * servings
+		protein += entry.protein * servings
+	}
+
+	predictedCalories := days * 1800
+	predictedProtein := days * 100
+
+	caloriesHours := (predictedCalories - calories) / 1800 * 24
+	proteinHours := (predictedProtein - protein) / 100 * 24
+
+	reset := "\033[0m"
+	red := "\033[31m"
+	green := "\033[32m"
+	if caloriesHours < 0 {
+		fmt.Printf("%s", red)
+		fmt.Printf("Cal: % 4.0f (%s)\n", calories-predictedCalories, duration(int(caloriesHours*3600)))
+		fmt.Printf("%s", reset)
+	} else {
+		fmt.Printf("%s", green)
+		fmt.Printf("Cal: % 4.0f (%s)\n", calories-predictedCalories, duration(int(caloriesHours*3600)))
+		fmt.Printf("%s", reset)
+	}
+	if proteinHours < 0 {
+		fmt.Printf("%s", green)
+		fmt.Printf("Pro: % 4.0f (%s)\n", protein-predictedProtein, duration(int(proteinHours*3600)))
+		fmt.Printf("%s", reset)
+	} else {
+		fmt.Printf("%s", red)
+		fmt.Printf("Pro: % 4.0f (%s)\n", protein-predictedProtein, duration(int(proteinHours*3600)))
+		fmt.Printf("%s", reset)
 	}
 }
 

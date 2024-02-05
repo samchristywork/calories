@@ -120,5 +120,21 @@ func addFood(filename string, food string, calories string, protein string, serv
 	}
 }
 
+func showFood(filename string) {
+	entries := readFoodLog(filename)
+
+	fmt.Println("Date        Cal  Pro  Srv Food")
+	for _, entry := range entries {
+		fmt.Printf(
+			"%s % 4.0f % 4.0f % 4.0f %s\n",
+			entry.date,
+			entry.calories,
+			entry.protein,
+			entry.servings,
+			entry.food,
+		)
+	}
+}
+
 func main() {
 }

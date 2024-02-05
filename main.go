@@ -94,6 +94,26 @@ func addFood(filename string, food string, calories string, protein string, serv
 		servings, _ = reader.ReadString('\n')
 	}
 
+	food = strings.Trim(food, " \n")
+	calories = strings.Trim(calories, " \n")
+	protein = strings.Trim(protein, " \n")
+	servings = strings.Trim(servings, " \n")
+
+	if !isNumeric(calories) {
+		fmt.Println("Calories must be a number")
+		return
+	}
+
+	if !isNumeric(protein) {
+		fmt.Println("Protein must be a number")
+		return
+	}
+
+	if !isNumeric(servings) {
+		fmt.Println("Servings must be a number")
+		return
+	}
+
 	file, err := os.OpenFile(
 		filename,
 		os.O_APPEND|os.O_CREATE|os.O_WRONLY,
@@ -119,6 +139,8 @@ func addFood(filename string, food string, calories string, protein string, serv
 	if err != nil {
 		fmt.Println(err)
 	}
+
+	fmt.Println("Food added")
 }
 
 func showFood(filename string) {

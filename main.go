@@ -227,5 +227,27 @@ func summary(filename string) {
 	}
 }
 
+func watch(filename string) {
+	fmt.Printf("\033[?1049h")
+	quit := make(chan bool)
+	go func() {
+		os.Stdin.Read(make([]byte, 1))
+		quit <- true
+	}()
+	for {
+		select {
+		case <-quit:
+			fmt.Printf("\033[?1049l")
+			return
+		default:
+		}
+
+		fmt.Printf("\033[2J")
+		fmt.Printf("\033[H")
+		summary(filename)
+		time.Sleep(1 * time.Second)
+	}
+}
+
 func main() {
 }

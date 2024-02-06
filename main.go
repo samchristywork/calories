@@ -259,7 +259,25 @@ func main() {
 	proteinFlag := flag.String("protein", "", "Protein")
 	servingsFlag := flag.String("servings", "", "Servings")
 
+	flag.Usage = func() {
+		fmt.Println("Usage: calories <subcommand> [options]")
+		fmt.Println("")
+		fmt.Println("Subcommands:")
+		fmt.Println("  add")
+		fmt.Println("  show")
+		fmt.Println("  summary")
+		fmt.Println("  watch")
+		fmt.Println("")
+		fmt.Println("Options:")
+		flag.PrintDefaults()
+	}
+
 	flag.Parse()
+
+	if *helpFlag {
+		flag.Usage()
+		return
+	}
 
 	switch flag.Arg(0) {
 	case "show":
@@ -276,5 +294,7 @@ func main() {
 		summary(filename)
 	case "watch":
 		watch(filename)
+	default:
+		flag.Usage()
 	}
 }

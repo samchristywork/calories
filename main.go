@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"os"
 	"strconv"
@@ -250,4 +251,30 @@ func watch(filename string) {
 }
 
 func main() {
+	filename := "/home/sam/.calories"
+
+	helpFlag := flag.Bool("help", false, "Show help")
+	foodFlag := flag.String("food", "", "Food")
+	caloriesFlag := flag.String("calories", "", "Calories")
+	proteinFlag := flag.String("protein", "", "Protein")
+	servingsFlag := flag.String("servings", "", "Servings")
+
+	flag.Parse()
+
+	switch flag.Arg(0) {
+	case "show":
+		showFood(filename)
+	case "add":
+		addFood(
+			filename,
+			*foodFlag,
+			*caloriesFlag,
+			*proteinFlag,
+			*servingsFlag,
+		)
+	case "summary":
+		summary(filename)
+	case "watch":
+		watch(filename)
+	}
 }

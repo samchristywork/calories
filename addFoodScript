@@ -1,0 +1,4 @@
+#!/bin/bash
+
+go run . --food "$(awk -F'\t' '{print $2}' < ~/.calories | sort | uniq | rofi -i -dmenu)" add
+go run . show
